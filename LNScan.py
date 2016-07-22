@@ -23,8 +23,9 @@ def parse_args():
                                      formatter_class=argparse.RawTextHelpFormatter,
                                      usage='LNScan [options]')
     parser.add_argument('-v', action='version', version='%(prog)s 1.0 By wps2015')
-    parser.add_argument('--ip', metavar='IP', type=str, default='', help='ip addresses like 192.168.1.1/24')
-    parser.add_argument('--port', metavar='PORT', type=str, default='', help='user single quotes to split the ports,\
+    parser.add_argument('-f', type=str, help="import the file of ip/domain list")
+    parser.add_argument('--ip', type=str, help='ip addresses like 192.168.1.1/24')
+    parser.add_argument('--port', type=str, default='', help='user single quotes to split the ports,\
                                           like 80,21, default 8 ports')
     if len(sys.argv) == 1:
         sys.argv.append('-h')
@@ -34,15 +35,25 @@ def parse_args():
 
 
 def _check_args(_args):
-    if not _args.ip:
-        msg = 'Use --ip to set the ip address range'
+    if not _args.ip and not _args.f:
+        msg = 'Use --ip or -f to set the ip address range'
         raise Exception(msg)
+    if _args.f and _args.ip:
+        raise Exception("one of -f and --ip is available")
 
 
 def ip_parse(ip):
     _ips = ip.strip()
     ips = ipaddress.IPv4Network(u'%s' % _ips, strict=False)
     return ips
+
+
+def ip_revive(path):
+    ip_ls = []
+    with open(path, 'r') as f:
+        for ip in f.readlines():
+            ip_ls.append(ip.strip())
+    return ip_ls
 
 
 class scan(threading.Thread):
@@ -114,7 +125,10 @@ class scan(threading.Thread):
 
 if __name__ == '__main__':
     args = parse_args()
-    ip_lists = ip_parse(args.ip)
+    if args.ip:
+        ip_lists = ip_parse(args.ip)
+    else:
+        ip_lists = ip_revive(args.f)
     ports = args.port
     if ports:
         ports = ports.split(',')
