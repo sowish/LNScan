@@ -160,7 +160,7 @@ if __name__ == '__main__':
     pool = multiprocessing.Pool(10)
     scanned_ips = []
     for _host in next_ips:
-        pool.apply_async(func=batch_scan, args=(_host, q_results, lock, 20, 20))
+        pool.apply_async(func=batch_scan, args=(_host, q_results, lock, 20, 5))
     pool.close()
     pool.join()
     report(ip_info, q_results, start_time)

@@ -12,10 +12,6 @@ from bs4 import BeautifulSoup
 import time
 import glob
 from interface import InfoDisScannerBase
-import socket
-import ipaddress
-import os
-import webbrowser
 
 
 class InfoDisScanner(InfoDisScannerBase):
@@ -150,19 +146,6 @@ class InfoDisScanner(InfoDisScannerBase):
 
     def get_status(self, url):
         return self._http_request(url)[0]
-
-    # def check_404(self):
-    #     """
-    #     check status 404 existence
-    #     """
-    #     try:
-    #         self._status, headers, html_doc = self._http_request('/A_NOT_EXISTED_URL_TO_CHECK_404_STATUS_EXISTENCE')
-    #         if self._status == -1:
-    #             print '[ERROR] Fail to connect to %s' % self.host
-    #         self.has_404 = (self._status == 404)
-    #         return self._status, self.has_404
-    #     except Exception, e:
-    #         logging.error("[Check_404] Exception %s" % e)
 
     def _enqueue(self, url):
         if url in self.urls_in_queue:

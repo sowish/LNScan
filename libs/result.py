@@ -1,5 +1,5 @@
 # !/usr/bin/env python
-# coding:utf-8
+# -*- encoding: utf-8 -*-
 
 
 from report import TEMPLATE_host, TEMPLATE_html, TEMPLATE_info, TEMPLATE_sensitive_path
@@ -30,20 +30,22 @@ def report(scan_result, q_results, start_time):
         else:
             for key in result.keys():
                 path_dic[__host] += result[key]
-    print path_dic
 
     for key in scan_result.keys():              # 处理空的字典
         if scan_result[key]['title'] or scan_result[key]['port']:
             keys.append(key)
         else:
             pass
-    print keys
     for ke in keys:
         uri = "http://"+ke+'/'
         _str = t_info.substitute({'url': uri, 'title': scan_result[ke]['title'], 'port': scan_result[ke]['port'] })
         if ke in host_list:
             for li in path_dic[ke]:
-                _str += t_path.substitute({'status': li['status'], 'url': li['url'] })
+                try:
+                    _str += t_path.substitute({'status': li['status'], 'url': li['url'] })
+                except Exception, e:
+                    print e
+                    continue
         _str = t_host.substitute({'host': ke, 'list': _str})
         html_doc += _str
     cost_time = time.time() - start_time
