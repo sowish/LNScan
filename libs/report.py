@@ -3,7 +3,7 @@
 TEMPLATE_html = """
 <html>
 <head>
-<title>LocalScan Report</title>
+<title>LNScan Report</title>
 <meta http-equiv="content-type" content="text/html;charset=UTF-8">
 <style>
     body {width:960px; margin:auto; margin-top:10px; background:rgb(200,200,200);}
@@ -12,7 +12,7 @@ TEMPLATE_html = """
 </style>
 </head>
 <body>
-<p>Please consider to contribute some rules to make localscan more efficient.  <b>localscan v 1.0</b></p>
+<p>Please consider to contribute some rules to make LNScan more efficient.  <b>LNScan v 1.0</b></p>
 <p>Current Scan was finished in ${cost_min} min ${cost_seconds} seconds.</p>
 ${content}
 </body>
@@ -27,11 +27,11 @@ ${list}
 """
 
 TEMPLATE_info = """
- <li class="high"><a href="${url}" target="_blank">${title}</a></li><br/>
+ <li class="normal"><a href="${url}" target="_blank">${title}</a></li><br/>
  <li style=“color:#F00" class="high"><p>${port}</p></li>
 """
 
-# TEMPLATE_port = """
-#  <li class="high"><p>${port}</p></li>
-# """
+TEMPLATE_sensitive_path = """
+ <li class="normal">[${status}] <a href="${url}" target="_blank">${url}</a></li>
+"""
 
