@@ -22,19 +22,12 @@ class InfoDisScanner(InfoDisScannerBase):
         self.final_severity = 0
         self.schema, self.host, self.path = self._parse_url(url)
         self.max_depth = self._cal_depth(self.path)[1] + depth     # max depth to scan
-        # self._status, self.has_404 = self.check_404()           # check the existence of status 404
         self.url_queue = Queue.Queue()    # all urls in queue to scan
         self.urls_in_queue = []           # urls already in queue
-        # if self._status == -1:
-        #     return None
         self._init_rules()
-
         _path, _depth = self._cal_depth(self.path)
-
         self._enqueue(_path)
-
         self.crawl_index(_path)
-        # exit()
         self.lock = threading.Lock()
         self.results = {}
 
