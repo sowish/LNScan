@@ -85,7 +85,7 @@ class WeakScan:
             else:
                 self.ip_result[url]['title'] = title.encode('utf-8', 'ignore')
         except Exception, e:
-            self.ip_result[url]['title'] = ''
+            self.ip_result[url]['title'] = url
 
     def port_scan(self, url, _ports):
         http_port = [80, 81, 8080, 8081, 8090]
@@ -164,9 +164,3 @@ if __name__ == '__main__':
     pool.close()
     pool.join()
     report(ip_info, q_results, start_time)
-
-
-
-
-
-
