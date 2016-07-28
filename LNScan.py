@@ -79,13 +79,16 @@ class WeakScan:
                 title = res_h1.group(1).strip()
             else:
                 title = "Null"
-            if res_charset:
-                coding = res_charset.group(1).strip().lower()
-                self.ip_result[url]['title'] = title.encode(coding)
-            else:
-                self.ip_result[url]['title'] = title.encode('utf-8', 'ignore')
+            try:
+                if res_charset:
+                    coding = res_charset.group(1).strip().lower()
+                    self.ip_result[url]['title'] = title.encode(coding)
+                else:
+                    self.ip_result[url]['title'] = title.encode('utf-8', 'ignore')
+            except Exception, e:
+                self.ip_result[url]['title'] = url
         except Exception, e:
-            self.ip_result[url]['title'] = url
+            self.ip_result[url]['title'] = ''
 
     def port_scan(self, url, _ports):
         http_port = [80, 81, 8080, 8081, 8090]
