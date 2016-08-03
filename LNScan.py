@@ -29,6 +29,7 @@ def parse_args():
     parser.add_argument('--ip', type=str, help='ip addresses like 192.168.1.1/24')
     parser.add_argument('--port', type=str, default='', help='user single quotes to split the ports,\
                                           like 80,21, default 8 ports')
+    parser.add_argument('--extend', type=str, default='', help='extend the given ips by ip masks ,such as "30"')
     if len(sys.argv) == 1:
         sys.argv.append('-h')
     _args = parser.parse_args()
@@ -136,12 +137,43 @@ def scan(url, s_results, _ports, _lock):
         s_results.put((_results, _hosts))
 
 
+def ip_into_int(ip):
+    # (((((192 * 256) + 168) * 256) + 1) * 256) + 13
+    return reduce(lambda x, y: (x << 8)+y, map(int, ip.split('.')))
+
+
+def is_internal_ip(ip):
+    if ip == '127.0.0.1':
+        return True
+    ip = ip_into_int(ip)
+    net_a = ip_into_int('10.255.255.255') >> 24
+    net_b = ip_into_int('172.31.255.255') >> 20
+    net_c = ip_into_int('192.168.255.255') >> 16
+    return ip >> 24 == net_a or ip >> 20 == net_b or ip >> 16 == net_c
+
+
+def ip_extend(ini_list, extend):
+    print "domains are been extended..."
+    extend_all_ips = []
+    for _domain in ini_list:
+        ip = socket.gethostbyname(_domain)
+        if is_internal_ip(ip):
+            continue
+        __ip = ip+"/"+extend
+        extend_ips = ip_parse(__ip)
+        extend_all_ips += extend_ips
+    extend_last_ips = list(set(ini_list + extend_all_ips))
+    return extend_last_ips
+
+
 if __name__ == '__main__':
     args = parse_args()
     if args.ip:
         ip_lists = ip_parse(args.ip)
     else:
         ip_lists = ip_revive(args.f)
+        if args.extend:
+            ip_lists = ip_extend(ip_lists, args.extend)
     ports = args.port
     if ports:
         ports = ports.split(',')
@@ -157,7 +189,6 @@ if __name__ == '__main__':
         s_results, s_hosts = ip_Queue.get()
         ip_info = dict(ip_info, **s_results)
         next_ips += s_hosts
-
     q_results = multiprocessing.Manager().Queue()   # start BBScan
     lock = multiprocessing.Manager().Lock()
     pool = multiprocessing.Pool(10)

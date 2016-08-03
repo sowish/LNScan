@@ -7,6 +7,7 @@ LNScan(Local Network Scanner)，作为一个内部网络扫描器，仅是为了
 - 支持指定ip段，或者文件导入（ip/域名）
 - 敏感文件扫描支持多web端口
 - 扫描结束后生成格式鲜明的html报告，方便查看
+- 支持自定义扩展每个导入ip/doamin，如"--extentd 30"，则扩展成4个
 
 #### Usage
 
@@ -17,11 +18,12 @@ A WebScanner to scan local network.
 By wps2015(http://wps2015.org)
 
 optional arguments:
-  -h, --help   show this help message and exit
-  -v           show program's version number and exit
-  -f F         import the file of ip/domain list
-  --ip IP      ip addresses like 192.168.1.1/24
-  --port PORT  user single quotes to split the ports,like 80,21, default 8 ports
+  -h, --help       show this help message and exit
+  -v               show program's version number and exit
+  -f F             import the file of ip/domain list
+  --ip IP          ip addresses like 192.168.1.1/24
+  --port PORT      user single quotes to split the ports, like 80,21, default 8 ports
+  --extend EXTEND  extend the given ips by ip masks ,such as "30"
 ```
 #### Other
 if you have any bug , please remind me in the Issues.
