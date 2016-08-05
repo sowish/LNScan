@@ -25,5 +25,9 @@ optional arguments:
   --port PORT      user single quotes to split the ports, like 80,21, default 8 ports
   --extend EXTEND  extend the given ips by ip masks ,such as "30"
 ```
+
+#### Require
+ipaddress、bs4、requests
+
 #### Other
 if you have any bug , please remind me in the Issues.
