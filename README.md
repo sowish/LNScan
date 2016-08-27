@@ -27,7 +27,14 @@ optional arguments:
 ```
 
 #### Require
-ipaddress、bs4、requests
+ipaddress、bs4、requests、ssl
 
 #### Other
 if you have any bug , please remind me in the Issues.
+
+### Update
+##### 2016.8.27 更新版本v1.5
+1. 更改页面抓取编码正则，改进title抓取为乱码的情况
+2. 添加https扫描敏感路径功能
+
+etc. 感谢`@junmoxiao`的建议

@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 import time
 import glob
 from interface import InfoDisScannerBase
+import ssl
 
 
 class InfoDisScanner(InfoDisScannerBase):
@@ -99,7 +100,12 @@ class InfoDisScanner(InfoDisScannerBase):
         try:
             if not url: url = '/'
             _host = self.host.split(":")
-            conn_fuc = httplib.HTTPSConnection if self.schema == 'https' else httplib.HTTPConnection
+            ssl._create_default_https_context = ssl._create_unverified_context
+            if _host[1] == '443':
+                conn_fuc = httplib.HTTPSConnection
+                self.schema = 'https'
+            else:
+                conn_fuc = httplib.HTTPConnection
             conn = conn_fuc(host=_host[0], port=_host[1], timeout=timeout)
             conn.request(method='GET', url=url,
                          headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36 BBScan/1.0'}
@@ -168,7 +174,9 @@ class InfoDisScanner(InfoDisScannerBase):
                 if depth <= self.max_depth:
                     self._enqueue(url)
         except Exception, e:
-            logging.error('Exception in crawl_index: %s' % e)
+            #print e, path
+            pass
+            #logging.error('Exception in crawl_index: %s %s' % e, path)
 
     def _get_url(self):
         """
@@ -218,8 +226,10 @@ class InfoDisScanner(InfoDisScannerBase):
                         self.lock.acquire()
                         # print '[+] [Prefix:%s] [%s] %s' % (prefix, status, 'http://' + self.host +  url)
                         if not prefix in self.results:
-                            self.results[prefix]= []
-                        self.results[prefix].append({'status':status, 'url': '%s://%s%s' % (self.schema, self.host, url)} )
+                            self.results[prefix] = []
+                        if self.schema == 'https':
+                            self.host = self.host.split(":")[0]
+                        self.results[prefix].append({'status': status, 'url': '%s://%s%s' % (self.schema, self.host, url)} )
                         self._update_severity(severity)
                         self.lock.release()
 
@@ -256,5 +266,4 @@ def batch_scan(url, q_results, lock, threads_num, timeout):
             for key in results.keys():
                 for url in results[key]:
                     print  '[+] [%s] %s' % (url['status'], url['url'])
-
-
+                    

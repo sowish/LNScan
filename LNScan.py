@@ -24,7 +24,7 @@ def parse_args():
                                      description="A WebScanner to scan local network.\nBy wps2015(http://wps2015.org)",
                                      formatter_class=argparse.RawTextHelpFormatter,
                                      usage='LNScan [options]')
-    parser.add_argument('-v', action='version', version='%(prog)s 1.0 By wps2015')
+    parser.add_argument('-v', action='version', version='%(prog)s 1.5 By wps2015')
     parser.add_argument('-f', type=str, help="import the file of ip/domain list")
     parser.add_argument('--ip', type=str, help='ip addresses like 192.168.1.1/24')
     parser.add_argument('--port', type=str, default='', help='user single quotes to split the ports,\
@@ -72,7 +72,7 @@ class WeakScan:
         try:
             req = requests.get("http://"+url, timeout=3)
             res_title = re.search(r'<title>([\s\S]*?)</title>', req.text, re.IGNORECASE)
-            res_charset = re.search(r'charset=[\"]*?(.*?)\"', req.text, re.IGNORECASE)
+            res_charset = re.search(r'charset=[\"]+?(\w*?)[\"]+', req.text, re.IGNORECASE)
             res_h1 = re.search(r'<h1>([\s\S]*?)</h1>', req.text, re.IGNORECASE)
             if res_title:
                 title = res_title.group(1).strip()
@@ -92,7 +92,7 @@ class WeakScan:
             self.ip_result[url]['title'] = ''
 
     def port_scan(self, url, _ports):
-        http_port = [80, 81, 8080, 8081, 8090]
+        http_port = [80, 81, 443, 8080, 8081, 8090]
         if _ports:
             ip_port = _ports
         else:
